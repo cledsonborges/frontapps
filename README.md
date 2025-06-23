@@ -204,7 +204,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 
 ## 👥 Equipe
 
-- **Desenvolvimento:** Manus AI
 - **Backend API:** [BFF-Analyse](https://github.com/cledsonborges/bff-analyse)
 - **Análise de IA:** Google Gemini
 
