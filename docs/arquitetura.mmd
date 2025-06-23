@@ -1,0 +1,80 @@
+graph TB
+    subgraph "Frontend - GitHub Pages"
+        A[React App] --> B[Dashboard Principal]
+        A --> C[Análise de Sentimentos]
+        A --> D[Ranking de Apps]
+        A --> E[Comentários]
+        A --> F[Análise IA]
+        A --> G[Backlog IA]
+        
+        B --> H[Componentes UI]
+        C --> H
+        D --> H
+        E --> H
+        F --> H
+        G --> H
+        
+        H --> I[shadcn/ui]
+        H --> J[Tailwind CSS]
+        H --> K[Recharts]
+        H --> L[Lucide Icons]
+    end
+    
+    subgraph "Backend - Vercel"
+        M[Flask API] --> N[/api/apps]
+        M --> O[/api/apps/{id}]
+        M --> P[/api/apps/{id}/reviews]
+        M --> Q[/api/scraping/google-play]
+        M --> R[/api/scraping/apple-store]
+        M --> S[/api/sentiment/analyze]
+        
+        N --> T[App Data Service]
+        O --> T
+        P --> U[Reviews Service]
+        Q --> V[Google Play Scraper]
+        R --> W[Apple Store Scraper]
+        S --> X[Sentiment Analysis]
+    end
+    
+    subgraph "Serviços Externos"
+        Y[Google Play Store]
+        Z[Apple App Store]
+        AA[Google Gemini API]
+        BB[GitHub API]
+    end
+    
+    subgraph "Dados e Storage"
+        CC[Apps Database]
+        DD[Reviews Cache]
+        EE[Sentiment Results]
+        FF[Backlog Items]
+    end
+    
+    %% Conexões Frontend -> Backend
+    A -->|HTTP/REST| M
+    F -->|Análise IA| AA
+    G -->|Geração Backlog| AA
+    
+    %% Conexões Backend -> Serviços
+    V -->|Scraping| Y
+    W -->|Scraping| Z
+    X -->|AI Analysis| AA
+    M -->|Issues| BB
+    
+    %% Conexões Backend -> Dados
+    T --> CC
+    U --> DD
+    X --> EE
+    G --> FF
+    
+    %% Styling
+    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef backend fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef external fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef data fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    
+    class A,B,C,D,E,F,G,H,I,J,K,L frontend
+    class M,N,O,P,Q,R,S,T,U,V,W,X backend
+    class Y,Z,AA,BB external
+    class CC,DD,EE,FF data
+
