@@ -223,5 +223,3 @@ Para suporte e dúvidas:
 
 ---
 
-**Desenvolvido com ❤️ por Manus AI**
-
