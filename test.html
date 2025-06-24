@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Análise de Apps de Investimento - Teste</title>
+    <link rel="stylesheet" crossorigin href="./assets/index-D8bwGaJ1.css">
+</head>
+<body>
+    <div id="root">
+        <div style="padding: 20px; text-align: center;">
+            <h1>Dashboard de Análise de Apps de Investimento</h1>
+            <p>Carregando aplicação...</p>
+            <div id="loading-status">Verificando carregamento do React...</div>
+        </div>
+    </div>
+    
+    <script>
+        console.log('HTML carregado');
+        
+        // Verificar se o elemento root existe
+        const root = document.getElementById('root');
+        console.log('Root element:', root);
+        
+        // Tentar carregar o módulo
+        const loadingStatus = document.getElementById('loading-status');
+        
+        import('./assets/index-BN4_ri5M.js')
+            .then(() => {
+                console.log('Módulo carregado com sucesso');
+                loadingStatus.textContent = 'Módulo carregado com sucesso!';
+                loadingStatus.style.color = 'green';
+            })
+            .catch(error => {
+                console.error('Erro ao carregar módulo:', error);
+                loadingStatus.textContent = 'Erro ao carregar módulo: ' + error.message;
+                loadingStatus.style.color = 'red';
+            });
+    </script>
+</body>
+</html>
+
