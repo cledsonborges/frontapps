@@ -1,250 +1,229 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button.jsx'
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
+import { Button } from '@/components/ui/button.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
+import { Progress } from '@/components/ui/progress.jsx'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
-import { TrendingUp, TrendingDown, Star, MessageSquare, Target, Lightbulb, AlertTriangle, Trophy, Brain, Zap } from 'lucide-react'
-import SentimentAnalyzer from './components/SentimentAnalyzer.jsx'
-import BacklogGenerator from './components/BacklogGenerator.jsx'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
+import { TrendingUp, TrendingDown, DollarSign, Users, Smartphone, Star, Activity, Target } from 'lucide-react'
 import './App.css'
 
-// Componente Dashboard Principal
-function Dashboard() {
-  const [apps, setApps] = useState([])
-  const [loading, setLoading] = useState(true)
+function App() {
   const [selectedApp, setSelectedApp] = useState(null)
-  const [sentimentData, setSentimentData] = useState(null)
 
-  useEffect(() => {
-    fetchApps()
-  }, [])
-
-  const fetchApps = async () => {
-    try {
-      const response = await fetch('https://bff-analyse.vercel.app/api/apps')
-      const data = await response.json()
-      setApps(data)
-      setLoading(false)
-    } catch (error) {
-      console.error('Erro ao buscar apps:', error)
-      setLoading(false)
+  // Dados simulados dos apps de investimento
+  const appsData = [
+    {
+      id: 1,
+      name: 'InvestMax',
+      rating: 4.8,
+      users: 2500000,
+      revenue: 15000000,
+      growth: 23.5,
+      category: 'Corretora',
+      features: ['Ações', 'Fundos', 'Renda Fixa', 'Criptomoedas'],
+      performance: 'Excelente'
+    },
+    {
+      id: 2,
+      name: 'TradePro',
+      rating: 4.6,
+      users: 1800000,
+      revenue: 12000000,
+      growth: 18.2,
+      category: 'Trading',
+      features: ['Day Trade', 'Análise Técnica', 'Robôs', 'Alertas'],
+      performance: 'Muito Bom'
+    },
+    {
+      id: 3,
+      name: 'WealthBuilder',
+      rating: 4.7,
+      users: 3200000,
+      revenue: 22000000,
+      growth: 31.8,
+      category: 'Gestão',
+      features: ['Carteiras', 'Consultoria', 'Planejamento', 'Educação'],
+      performance: 'Excelente'
+    },
+    {
+      id: 4,
+      name: 'CryptoVault',
+      rating: 4.4,
+      users: 950000,
+      revenue: 8500000,
+      growth: 45.2,
+      category: 'Cripto',
+      features: ['Bitcoin', 'Ethereum', 'DeFi', 'Staking'],
+      performance: 'Bom'
+    },
+    {
+      id: 5,
+      name: 'SmartInvest',
+      rating: 4.5,
+      users: 1600000,
+      revenue: 9800000,
+      growth: 15.7,
+      category: 'Robo Advisor',
+      features: ['IA', 'Automação', 'Rebalanceamento', 'ETFs'],
+      performance: 'Muito Bom'
     }
+  ]
+
+  // Dados para gráficos
+  const monthlyData = [
+    { month: 'Jan', InvestMax: 1200, TradePro: 800, WealthBuilder: 1500, CryptoVault: 600, SmartInvest: 900 },
+    { month: 'Fev', InvestMax: 1350, TradePro: 920, WealthBuilder: 1680, CryptoVault: 750, SmartInvest: 980 },
+    { month: 'Mar', InvestMax: 1480, TradePro: 1050, WealthBuilder: 1820, CryptoVault: 890, SmartInvest: 1100 },
+    { month: 'Abr', InvestMax: 1620, TradePro: 1180, WealthBuilder: 1950, CryptoVault: 1020, SmartInvest: 1200 },
+    { month: 'Mai', InvestMax: 1750, TradePro: 1300, WealthBuilder: 2100, CryptoVault: 1180, SmartInvest: 1320 },
+    { month: 'Jun', InvestMax: 1890, TradePro: 1420, WealthBuilder: 2280, CryptoVault: 1350, SmartInvest: 1450 }
+  ]
+
+  const categoryData = [
+    { name: 'Corretora', value: 35, color: '#8884d8' },
+    { name: 'Trading', value: 25, color: '#82ca9d' },
+    { name: 'Gestão', value: 20, color: '#ffc658' },
+    { name: 'Cripto', value: 12, color: '#ff7300' },
+    { name: 'Robo Advisor', value: 8, color: '#00ff88' }
+  ]
+
+  const performanceData = [
+    { metric: 'Downloads', value: 85, target: 90 },
+    { metric: 'Retenção', value: 72, target: 75 },
+    { metric: 'Receita', value: 94, target: 85 },
+    { metric: 'Satisfação', value: 88, target: 90 }
+  ]
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value)
   }
 
-  const investmentApps = apps.filter(app => 
-    app.category === 'Finanças' || app.category === 'Finance'
-  )
-
-  const ionApp = investmentApps.find(app => 
-    app.name.toLowerCase().includes('íon') || app.name.toLowerCase().includes('ion')
-  )
-
-  const competitorApps = investmentApps.filter(app => 
-    !app.name.toLowerCase().includes('íon') && !app.name.toLowerCase().includes('ion')
-  ).slice(0, 5)
-
-  const chartData = investmentApps.map(app => ({
-    name: app.name,
-    rating: app.rating || 0
-  }))
-
-  const handleAnalysisComplete = (analysis) => {
-    setSentimentData(analysis)
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-lg">Carregando dados dos aplicativos...</p>
-        </div>
-      </div>
-    )
+  const formatNumber = (value) => {
+    return new Intl.NumberFormat('pt-BR').format(value)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ion-primary/5 via-gray-50 to-ion-secondary/10 dark:from-ion-primary dark:to-gray-800">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-ion-primary rounded-xl flex items-center justify-center mr-4">
-              <Trophy className="w-10 h-10 text-ion-secondary" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-ion-primary dark:text-white mb-2">
-                Dashboard de Análise de Apps de Investimento
-              </h1>
-              <p className="text-lg text-ion-primary/70 dark:text-gray-300">
-                Análise inteligente de sentimentos e insights executivos com IA • <span className="text-ion-secondary font-semibold">Íon em Destaque</span>
-              </p>
-            </div>
-          </div>
-          <div className="flex justify-center space-x-4">
-            <Badge className="bg-ion-secondary text-ion-primary font-semibold px-4 py-2">
-              <Brain className="w-4 h-4 mr-2" />
-              Powered by Google Gemini
-            </Badge>
-            <Badge className="bg-ion-accent text-white font-semibold px-4 py-2">
-              <Zap className="w-4 h-4 mr-2" />
-              Íon Investimentos
-            </Badge>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Dashboard de Análise de Apps de Investimento
+          </h1>
+          <p className="text-gray-600">
+            Análise completa do mercado de aplicativos financeiros e de investimento
+          </p>
         </div>
 
-        {/* Destaque do Íon Investimentos */}
-        {ionApp && (
-          <Card className="mb-8 border-2 border-ion-secondary bg-gradient-to-r from-ion-secondary/10 to-ion-primary/5 dark:from-ion-secondary/20 dark:to-ion-primary/20 shadow-lg">
-            <CardHeader>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-lg overflow-hidden">
-                  <img 
-                    src={ionApp.icon_url || '/placeholder-icon.png'} 
-                    alt={ionApp.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl text-ion-primary dark:text-ion-secondary">
-                    <Trophy className="inline mr-2" />
-                    {ionApp.name}
-                  </CardTitle>
-                  <CardDescription className="text-ion-primary/70 dark:text-ion-secondary/70">
-                    Aplicativo em destaque - Análise detalhada com IA
-                  </CardDescription>
-                </div>
-                <Badge variant="secondary" className="ml-auto bg-ion-secondary text-ion-primary font-semibold">
-                  <Star className="w-4 h-4 mr-1" />
-                  {ionApp.rating ? ionApp.rating.toFixed(2) : 'N/A'}
-                </Badge>
-              </div>
+        {/* KPIs */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                    {ionApp.total_reviews || 'N/A'}
-                  </div>
-                  <div className="text-sm text-orange-600 dark:text-orange-400">Total de Avaliações</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                    {ionApp.current_version || 'N/A'}
-                  </div>
-                  <div className="text-sm text-orange-600 dark:text-orange-400">Versão Atual</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                    {ionApp.store === 'google_play' ? 'Google Play' : 'App Store'}
-                  </div>
-                  <div className="text-sm text-orange-600 dark:text-orange-400">Plataforma</div>
-                </div>
-              </div>
+              <div className="text-2xl font-bold">{formatNumber(10050000)}</div>
+              <p className="text-xs text-muted-foreground">
+                <TrendingUp className="inline h-3 w-3 mr-1" />
+                +12.5% em relação ao mês anterior
+              </p>
             </CardContent>
           </Card>
-        )}
 
-        {/* Tabs principais */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{formatCurrency(67300000)}</div>
+              <p className="text-xs text-muted-foreground">
+                <TrendingUp className="inline h-3 w-3 mr-1" />
+                +18.2% em relação ao mês anterior
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Apps Analisados</CardTitle>
+              <Smartphone className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">5</div>
+              <p className="text-xs text-muted-foreground">
+                Principais players do mercado
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Rating Médio</CardTitle>
+              <Star className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">4.6</div>
+              <p className="text-xs text-muted-foreground">
+                Baseado em avaliações dos usuários
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="sentiment">Sentimentos</TabsTrigger>
-            <TabsTrigger value="ranking">Ranking</TabsTrigger>
-            <TabsTrigger value="comments">Comentários</TabsTrigger>
-            <TabsTrigger value="ai-analysis">Análise IA</TabsTrigger>
-            <TabsTrigger value="backlog">Backlog IA</TabsTrigger>
+            <TabsTrigger value="apps">Apps</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="performance">Performance</TabsTrigger>
           </TabsList>
 
-          {/* Visão Geral */}
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total de Apps</CardTitle>
-                  <Target className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{investmentApps.length}</div>
-                  <p className="text-xs text-muted-foreground">Apps de investimento</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Avaliação Média</CardTitle>
-                  <Star className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {(investmentApps.reduce((acc, app) => acc + (app.rating || 0), 0) / investmentApps.length).toFixed(2)}
-                  </div>
-                  <p className="text-xs text-muted-foreground">Média geral</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sentimento Positivo</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-green-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">68%</div>
-                  <p className="text-xs text-muted-foreground">Análise de sentimentos</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Oportunidades</CardTitle>
-                  <Lightbulb className="h-4 w-4 text-yellow-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-yellow-600">12</div>
-                  <p className="text-xs text-muted-foreground">Melhorias identificadas</p>
-                </CardContent>
-              </Card>
-            </div>
-
-             {/* Gráfico de Avaliações */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-ion-primary">Comparação de Avaliações</CardTitle>
-                <CardDescription>Avaliações médias dos principais apps</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="rating" fill="#A7CE2E" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Análise de Sentimentos */}
-          <TabsContent value="sentiment" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Distribuição de Sentimentos</CardTitle>
-                  <CardDescription>Análise geral dos comentários</CardDescription>
+                  <CardTitle>Crescimento Mensal de Usuários</CardTitle>
+                  <CardDescription>
+                    Evolução do número de usuários por app (em milhares)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={monthlyData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="WealthBuilder" stroke="#8884d8" strokeWidth={2} />
+                      <Line type="monotone" dataKey="InvestMax" stroke="#82ca9d" strokeWidth={2} />
+                      <Line type="monotone" dataKey="TradePro" stroke="#ffc658" strokeWidth={2} />
+                      <Line type="monotone" dataKey="SmartInvest" stroke="#ff7300" strokeWidth={2} />
+                      <Line type="monotone" dataKey="CryptoVault" stroke="#00ff88" strokeWidth={2} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Distribuição por Categoria</CardTitle>
+                  <CardDescription>
+                    Participação de mercado por tipo de app
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                       <Pie
-                        data={[
-                          { name: 'Positivo', value: 68, fill: '#10b981' },
-                          { name: 'Neutro', value: 20, fill: '#f59e0b' },
-                          { name: 'Negativo', value: 12, fill: '#ef4444' }
-                        ]}
+                        data={categoryData}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
@@ -253,12 +232,8 @@ function Dashboard() {
                         fill="#8884d8"
                         dataKey="value"
                       >
-                        {[
-                          { name: 'Positivo', value: 68, fill: '#10b981' },
-                          { name: 'Neutro', value: 20, fill: '#f59e0b' },
-                          { name: 'Negativo', value: 12, fill: '#ef4444' }
-                        ].map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        {categoryData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
                       <Tooltip />
@@ -266,286 +241,194 @@ function Dashboard() {
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tendência de Sentimentos</CardTitle>
-                  <CardDescription>Evolução ao longo do tempo</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={[
-                      { mes: 'Jan', positivo: 65, negativo: 15 },
-                      { mes: 'Fev', positivo: 67, negativo: 14 },
-                      { mes: 'Mar', positivo: 70, negativo: 12 },
-                      { mes: 'Abr', positivo: 68, negativo: 13 },
-                      { mes: 'Mai', positivo: 72, negativo: 11 },
-                      { mes: 'Jun', positivo: 68, negativo: 12 }
-                    ]}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="mes" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="positivo" stroke="#10b981" strokeWidth={2} />
-                      <Line type="monotone" dataKey="negativo" stroke="#ef4444" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
             </div>
-
-            {/* Insights Executivos */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Insights Executivos</CardTitle>
-                <CardDescription>Principais descobertas da análise</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-green-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-green-800 dark:text-green-300">Pontos Fortes</h4>
-                      <p className="text-sm text-green-700 dark:text-green-400">
-                        Interface intuitiva e facilidade de uso são os aspectos mais elogiados pelos usuários.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                    <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-yellow-800 dark:text-yellow-300">Oportunidades</h4>
-                      <p className="text-sm text-yellow-700 dark:text-yellow-400">
-                        Melhorar a velocidade de carregamento e adicionar mais opções de investimento.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                    <TrendingDown className="w-5 h-5 text-red-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-red-800 dark:text-red-300">Riscos</h4>
-                      <p className="text-sm text-red-700 dark:text-red-400">
-                        Reclamações sobre suporte ao cliente e problemas técnicos esporádicos.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
-          {/* Ranking */}
-          <TabsContent value="ranking" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ranking de Apps de Investimento</CardTitle>
-                <CardDescription>Classificação baseada em avaliações e análise de sentimentos</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {investmentApps.slice(0, 10).map((app, index) => (
-                    <div key={app.app_id} className={`flex items-center gap-4 p-4 rounded-lg border ${
-                      app.name.toLowerCase().includes('íon') || app.name.toLowerCase().includes('ion') 
-                        ? 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800' 
-                        : 'bg-gray-50 dark:bg-gray-800'
-                    }`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                        index === 0 ? 'bg-yellow-500 text-white' :
-                        index === 1 ? 'bg-gray-400 text-white' :
-                        index === 2 ? 'bg-orange-500 text-white' :
-                        'bg-gray-200 text-gray-700'
-                      }`}>
-                        {index + 1}
+          <TabsContent value="apps" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {appsData.map((app) => (
+                <Card key={app.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setSelectedApp(app)}>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-lg">{app.name}</CardTitle>
+                        <CardDescription>{app.category}</CardDescription>
                       </div>
-                      
-                      <div className="w-12 h-12 rounded-lg overflow-hidden">
-                        <img 
-                          src={app.icon_url || '/placeholder-icon.png'} 
-                          alt={app.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      
-                      <div className="flex-1">
-                        <h3 className="font-semibold">{app.name}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{app.category}</p>
-                      </div>
-                      
-                      <div className="text-right">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-yellow-500" />
-                          <span className="font-semibold">{app.rating ? app.rating.toFixed(2) : 'N/A'}</span>
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {app.total_reviews || 'N/A'} avaliações
-                        </p>
-                      </div>
-                      
-                      {(app.name.toLowerCase().includes('íon') || app.name.toLowerCase().includes('ion')) && (
-                        <Badge variant="secondary" className="bg-orange-200 text-orange-800">
-                          <Trophy className="w-3 h-3 mr-1" />
-                          Destaque
-                        </Badge>
-                      )}
+                      <Badge variant={app.performance === 'Excelente' ? 'default' : app.performance === 'Muito Bom' ? 'secondary' : 'outline'}>
+                        {app.performance}
+                      </Badge>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Comentários */}
-          <TabsContent value="comments" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Análise de Comentários</CardTitle>
-                <CardDescription>Principais temas e reclamações identificados</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold mb-4 text-green-700 dark:text-green-300">Elogios Mais Frequentes</h4>
+                  </CardHeader>
+                  <CardContent>
                     <div className="space-y-3">
-                      {[
-                        'Interface intuitiva e fácil de usar',
-                        'Taxas competitivas',
-                        'Variedade de produtos de investimento',
-                        'Suporte educacional',
-                        'Segurança e confiabilidade'
-                      ].map((elogio, index) => (
-                        <div key={index} className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                          <TrendingUp className="w-4 h-4 text-green-600" />
-                          <span className="text-sm">{elogio}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Rating</span>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 text-yellow-400 mr-1" />
+                          <span className="font-medium">{app.rating}</span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-4 text-red-700 dark:text-red-300">Reclamações Recorrentes</h4>
-                    <div className="space-y-3">
-                      {[
-                        'Lentidão no carregamento',
-                        'Problemas de sincronização',
-                        'Suporte ao cliente demorado',
-                        'Bugs em atualizações',
-                        'Falta de funcionalidades avançadas'
-                      ].map((reclamacao, index) => (
-                        <div key={index} className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                          <TrendingDown className="w-4 h-4 text-red-600" />
-                          <span className="text-sm">{reclamacao}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Usuários</span>
+                        <span className="font-medium">{formatNumber(app.users)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Receita</span>
+                        <span className="font-medium">{formatCurrency(app.revenue)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Crescimento</span>
+                        <div className="flex items-center">
+                          <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                          <span className="font-medium text-green-600">+{app.growth}%</span>
                         </div>
-                      ))}
+                      </div>
+                      <div className="pt-2">
+                        <div className="flex flex-wrap gap-1">
+                          {app.features.slice(0, 3).map((feature, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {feature}
+                            </Badge>
+                          ))}
+                          {app.features.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{app.features.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
 
-            {/* Comentários Recentes */}
+          <TabsContent value="analytics" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Comentários Recentes</CardTitle>
-                <CardDescription>Últimas avaliações dos usuários</CardDescription>
+                <CardTitle>Receita por App (Últimos 6 Meses)</CardTitle>
+                <CardDescription>
+                  Comparativo de receita mensal em milhares de reais
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {[
-                    {
-                      usuario: 'João Silva',
-                      rating: 5,
-                      comentario: 'Excelente app! Interface muito intuitiva e fácil de investir.',
-                      data: '2 dias atrás',
-                      sentimento: 'positivo'
-                    },
-                    {
-                      usuario: 'Maria Santos',
-                      rating: 3,
-                      comentario: 'Bom app, mas poderia ser mais rápido no carregamento.',
-                      data: '3 dias atrás',
-                      sentimento: 'neutro'
-                    },
-                    {
-                      usuario: 'Pedro Costa',
-                      rating: 4,
-                      comentario: 'Gosto das funcionalidades, mas o suporte demora para responder.',
-                      data: '5 dias atrás',
-                      sentimento: 'positivo'
-                    }
-                  ].map((comentario, index) => (
-                    <div key={index} className="p-4 border rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold">{comentario.usuario}</span>
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                className={`w-4 h-4 ${i < comentario.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} 
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <Badge variant={
-                          comentario.sentimento === 'positivo' ? 'default' :
-                          comentario.sentimento === 'neutro' ? 'secondary' : 'destructive'
-                        }>
-                          {comentario.sentimento}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{comentario.comentario}</p>
-                      <p className="text-xs text-gray-500">{comentario.data}</p>
-                    </div>
-                  ))}
-                </div>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={monthlyData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="WealthBuilder" fill="#8884d8" />
+                    <Bar dataKey="InvestMax" fill="#82ca9d" />
+                    <Bar dataKey="TradePro" fill="#ffc658" />
+                    <Bar dataKey="SmartInvest" fill="#ff7300" />
+                    <Bar dataKey="CryptoVault" fill="#00ff88" />
+                  </BarChart>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Análise IA */}
-          <TabsContent value="ai-analysis" className="space-y-6">
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Brain className="w-6 h-6 text-blue-600" />
-                <h2 className="text-2xl font-bold">Análise Inteligente com IA</h2>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400">
-                Use o poder da inteligência artificial para analisar comentários e gerar insights automáticos.
-              </p>
+          <TabsContent value="performance" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {performanceData.map((item, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      {item.metric}
+                      <Target className="h-5 w-5 text-gray-400" />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span>Atual: {item.value}%</span>
+                        <span>Meta: {item.target}%</span>
+                      </div>
+                      <Progress value={item.value} className="h-2" />
+                      <div className="text-xs text-gray-600">
+                        {item.value >= item.target ? (
+                          <span className="text-green-600">✓ Meta atingida</span>
+                        ) : (
+                          <span className="text-orange-600">
+                            Faltam {item.target - item.value}% para a meta
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-            
-            <SentimentAnalyzer onAnalysisComplete={handleAnalysisComplete} />
-          </TabsContent>
-
-          {/* Backlog IA */}
-          <TabsContent value="backlog" className="space-y-6">
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-6 h-6 text-purple-600" />
-                <h2 className="text-2xl font-bold">Backlog Inteligente</h2>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400">
-                Gere automaticamente itens de backlog priorizados baseados na análise de sentimentos.
-              </p>
-            </div>
-            
-            <BacklogGenerator sentimentData={sentimentData} />
           </TabsContent>
         </Tabs>
+
+        {/* Modal de detalhes do app */}
+        {selectedApp && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <Card className="max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-2xl">{selectedApp.name}</CardTitle>
+                    <CardDescription className="text-lg">{selectedApp.category}</CardDescription>
+                  </div>
+                  <Button variant="outline" onClick={() => setSelectedApp(null)}>
+                    ✕
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">{selectedApp.rating}</div>
+                      <div className="text-sm text-gray-600">Rating</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">+{selectedApp.growth}%</div>
+                      <div className="text-sm text-gray-600">Crescimento</div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold mb-2">Estatísticas</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Usuários Ativos:</span>
+                        <span className="font-medium">{formatNumber(selectedApp.users)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Receita Anual:</span>
+                        <span className="font-medium">{formatCurrency(selectedApp.revenue)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Performance:</span>
+                        <Badge variant={selectedApp.performance === 'Excelente' ? 'default' : 'secondary'}>
+                          {selectedApp.performance}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">Principais Funcionalidades</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedApp.features.map((feature, index) => (
+                        <Badge key={index} variant="outline">
+                          {feature}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
-  )
-}
-
-function App() {
-  return (
-    <Router basename="/frontapps">
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-    </Router>
   )
 }
 
