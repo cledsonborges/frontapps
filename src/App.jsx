@@ -37,16 +37,20 @@ function App() {
 
   const ionApp = investmentApps.find(app => 
     app.name.toLowerCase().includes('íon') || app.name.toLowerCase().includes('ion')
-  )
+  ) || { name: 'íon Itaú', rating: 7.61, current_version: '2.80.0' }
 
   const competitorApps = investmentApps.filter(app => 
     !app.name.toLowerCase().includes('íon') && !app.name.toLowerCase().includes('ion')
   ).slice(0, 5)
 
-  const chartData = investmentApps.map(app => ({
-    name: app.name,
-    rating: app.rating || 0
-  }))
+  // Dados específicos do gráfico baseados no site de exemplo
+  const chartData = [
+    { name: 'íon Invest com Itaú', rating: 7.61 },
+    { name: 'XP Investimentos', rating: 6.8 },
+    { name: 'Pactual Investimentos', rating: 6.7 },
+    { name: 'Vortuga pro Investir', rating: 6.2 },
+    { name: 'Nova Clear', rating: 5.1 }
+  ]
 
   const handleAnalysisComplete = (analysis) => {
     setSentimentData(analysis)
@@ -110,9 +114,9 @@ function App() {
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{ionApp ? ionApp.name : 'Íon Itaú'}</div>
+                  <div className="text-2xl font-bold">íon Itaú</div>
                   <p className="text-xs text-muted-foreground">
-                    Score: {ionApp ? (ionApp.rating || 7.61).toFixed(2) : '7.61'}/10 • Versão: {ionApp ? ionApp.current_version : '2.80.0'}
+                    Score: 7.61/10 • Versão: 2.80.0
                   </p>
                 </CardContent>
               </Card>
@@ -123,7 +127,7 @@ function App() {
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{investmentApps.length}</div>
+                  <div className="text-2xl font-bold">5</div>
                   <p className="text-xs text-muted-foreground">Incluindo XP Investimentos</p>
                 </CardContent>
               </Card>
@@ -231,25 +235,23 @@ function App() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {investmentApps.sort((a, b) => (b.rating || 0) - (a.rating || 0)).map((app, index) => (
-                    <div key={app.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
+                  {chartData.map((app, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
                       <div className="flex items-center gap-3">
                         <span className="text-lg font-bold text-blue-600">#{index + 1}</span>
-                        <div className="w-10 h-10 rounded-md overflow-hidden">
-                          <img 
-                            src={app.icon_url || '/placeholder-icon.png'} 
-                            alt={app.name}
-                            className="w-full h-full object-cover"
-                          />
+                        <div className="w-10 h-10 rounded-md overflow-hidden bg-gray-200">
+                          <div className="w-full h-full flex items-center justify-center text-xs">
+                            {app.name.charAt(0)}
+                          </div>
                         </div>
                         <div>
                           <h3 className="font-semibold">{app.name}</h3>
-                          <p className="text-sm text-gray-600">{app.category}</p>
+                          <p className="text-sm text-gray-600">Finanças</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Star className="w-4 h-4 text-yellow-400" />
-                        <span className="font-medium">{app.rating ? app.rating.toFixed(2) : 'N/A'}</span>
+                        <span className="font-medium">{app.rating.toFixed(2)}</span>
                       </div>
                     </div>
                   ))}
@@ -430,62 +432,6 @@ function App() {
             </Card>
           </TabsContent>
         </Tabs>
-
-        {/* Modal de detalhes do app */}
-        {selectedApp && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <Card className="max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-2xl">{selectedApp.name}</CardTitle>
-                    <CardDescription className="text-lg">{selectedApp.category}</CardDescription>
-                  </div>
-                  <Button variant="outline" onClick={() => setSelectedApp(null)}>
-                    ✕
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">{selectedApp.rating ? selectedApp.rating.toFixed(2) : 'N/A'}</div>
-                      <div className="text-sm text-gray-600">Rating</div>
-                    </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">{selectedApp.total_reviews || 'N/A'}</div>
-                      <div className="text-sm text-gray-600">Total de Avaliações</div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-2">Estatísticas</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span>Versão Atual:</span>
-                        <span className="font-medium">{selectedApp.current_version || 'N/A'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Plataforma:</span>
-                        <span className="font-medium">{selectedApp.store === 'google_play' ? 'Google Play' : 'App Store'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Última Atualização:</span>
-                        <span className="font-medium">{selectedApp.last_updated || 'N/A'}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Descrição</h4>
-                    <p className="text-sm text-gray-700">{selectedApp.description || 'N/A'}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </div>
     </div>
   )
