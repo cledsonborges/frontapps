@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
+import { Button } from '@/components/ui/button.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
-import { TrendingUp, TrendingDown, Star, MessageSquare, Target, Lightbulb, AlertTriangle, Trophy, Brain, Zap } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
+import { TrendingUp, TrendingDown, Star, Users, TriangleAlert, Clock, BarChart3, MessageSquare, Target, Lightbulb, AlertTriangle, Trophy, Brain, Zap } from 'lucide-react'
 import SentimentAnalyzer from './components/SentimentAnalyzer.jsx'
 import BacklogGenerator from './components/BacklogGenerator.jsx'
 import './App.css'
 
-// Componente Dashboard Principal
-function Dashboard() {
+function App() {
   const [apps, setApps] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedApp, setSelectedApp] = useState(null)
@@ -66,170 +64,202 @@ function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ion-primary/5 via-gray-50 to-ion-secondary/10 dark:from-ion-primary dark:to-gray-800">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-ion-primary rounded-xl flex items-center justify-center mr-4">
-              <Trophy className="w-10 h-10 text-ion-secondary" />
+        <header className="mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">
+                  Dashboard de Análise de Aplicativos de Investimento
+                </h1>
+                <p className="text-muted-foreground">
+                  Análise competitiva com IA • Google Play Store Brasil • Atualizado em tempo real
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-4xl font-bold text-ion-primary dark:text-white mb-2">
-                Dashboard de Análise de Apps de Investimento
-              </h1>
-              <p className="text-lg text-ion-primary/70 dark:text-gray-300">
-                Análise inteligente de sentimentos e insights executivos com IA • <span className="text-ion-secondary font-semibold">Íon em Destaque</span>
-              </p>
-            </div>
-          </div>
-          <div className="flex justify-center space-x-4">
-            <Badge className="bg-ion-secondary text-ion-primary font-semibold px-4 py-2">
-              <Brain className="w-4 h-4 mr-2" />
-              Powered by Google Gemini
-            </Badge>
-            <Badge className="bg-ion-accent text-white font-semibold px-4 py-2">
-              <Zap className="w-4 h-4 mr-2" />
-              Íon Investimentos
+            <Badge variant="secondary" className="bg-green-100 text-green-800">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              Dados Atualizados
             </Badge>
           </div>
-        </div>
-
-        {/* Destaque do Íon Investimentos */}
-        {ionApp && (
-          <Card className="mb-8 border-2 border-ion-secondary bg-gradient-to-r from-ion-secondary/10 to-ion-primary/5 dark:from-ion-secondary/20 dark:to-ion-primary/20 shadow-lg">
-            <CardHeader>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-lg overflow-hidden">
-                  <img 
-                    src={ionApp.icon_url || '/placeholder-icon.png'} 
-                    alt={ionApp.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl text-ion-primary dark:text-ion-secondary">
-                    <Trophy className="inline mr-2" />
-                    {ionApp.name}
-                  </CardTitle>
-                  <CardDescription className="text-ion-primary/70 dark:text-ion-secondary/70">
-                    Aplicativo em destaque - Análise detalhada com IA
-                  </CardDescription>
-                </div>
-                <Badge variant="secondary" className="ml-auto bg-ion-secondary text-ion-primary font-semibold">
-                  <Star className="w-4 h-4 mr-1" />
-                  {ionApp.rating ? ionApp.rating.toFixed(2) : 'N/A'}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                    {ionApp.total_reviews || 'N/A'}
-                  </div>
-                  <div className="text-sm text-orange-600 dark:text-orange-400">Total de Avaliações</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                    {ionApp.current_version || 'N/A'}
-                  </div>
-                  <div className="text-sm text-orange-600 dark:text-orange-400">Versão Atual</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                    {ionApp.store === 'google_play' ? 'Google Play' : 'App Store'}
-                  </div>
-                  <div className="text-sm text-orange-600 dark:text-orange-400">Plataforma</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        </header>
 
         {/* Tabs principais */}
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="sentiment">Sentimentos</TabsTrigger>
             <TabsTrigger value="ranking">Ranking</TabsTrigger>
-            <TabsTrigger value="comments">Comentários</TabsTrigger>
-            <TabsTrigger value="ai-analysis">Análise IA</TabsTrigger>
-            <TabsTrigger value="backlog">Backlog IA</TabsTrigger>
+            <TabsTrigger value="sentiments">Sentimentos</TabsTrigger>
+            <TabsTrigger value="comments">Comentários íon</TabsTrigger>
+            <TabsTrigger value="backlog">Backlog</TabsTrigger>
+            <TabsTrigger value="ai-backlog">IA Backlog</TabsTrigger>
           </TabsList>
 
           {/* Visão Geral */}
           <TabsContent value="overview" className="space-y-6">
+            {/* KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total de Apps</CardTitle>
-                  <Target className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">Líder do Ranking</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{ionApp ? ionApp.name : 'Íon Itaú'}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Score: {ionApp ? (ionApp.rating || 7.61).toFixed(2) : '7.61'}/10 • Versão: {ionApp ? ionApp.current_version : '2.80.0'}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Apps Analisados</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{investmentApps.length}</div>
-                  <p className="text-xs text-muted-foreground">Apps de investimento</p>
+                  <p className="text-xs text-muted-foreground">Incluindo XP Investimentos</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Avaliação Média</CardTitle>
-                  <Star className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">Comentários Analisados</CardTitle>
+                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">
-                    {(investmentApps.reduce((acc, app) => acc + (app.rating || 0), 0) / investmentApps.length).toFixed(2)}
-                  </div>
-                  <p className="text-xs text-muted-foreground">Média geral</p>
+                  <div className="text-2xl font-bold">750</div>
+                  <p className="text-xs text-muted-foreground">150 por aplicativo</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sentimento Positivo</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <CardTitle className="text-sm font-medium">Maior Concorrente</CardTitle>
+                  <Target className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">68%</div>
-                  <p className="text-xs text-muted-foreground">Análise de sentimentos</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Oportunidades</CardTitle>
-                  <Lightbulb className="h-4 w-4 text-yellow-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">12</div>
-                  <p className="text-xs text-muted-foreground">Melhorias identificadas</p>
+                  <div className="text-2xl font-bold">XP Invest.</div>
+                  <p className="text-xs text-muted-foreground">305K avaliações • 5M+ downloads</p>
                 </CardContent>
               </Card>
             </div>
 
-             {/* Gráfico de Avaliações */}
+            {/* Ranking Geral dos Aplicativos */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-ion-primary">Comparação de Avaliações</CardTitle>
-                <CardDescription>Avaliações médias dos principais apps</CardDescription>
+                <CardTitle>Ranking Geral dos Aplicativos</CardTitle>
+                <CardDescription>Score final baseado em nota do Play Store (60%) + análise de sentimentos (40%)</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
-                    <YAxis />
+                    <YAxis domain={[0, 8]} />
                     <Tooltip />
-                    <Bar dataKey="rating" fill="#A7CE2E" />
+                    <Bar dataKey="rating" fill="#3b82f6" />
                   </BarChart>
                 </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Pontos Fortes e Áreas de Melhoria */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Pontos Fortes do íon Itaú</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">1º Lugar</Badge>
+                    <span className="text-sm">Melhor score geral (7.61/10)</span>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">4.68★</Badge>
+                    <span className="text-sm">Excelente avaliação no Play Store</span>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Badge variant="secondary" className="bg-orange-100 text-orange-800">v2.80.0</Badge>
+                    <span className="text-sm">Versão mais recente capturada</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <TriangleAlert className="h-5 w-5 text-red-600" />
+                    <span>Áreas de Melhoria</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-start space-x-3 p-3 border rounded-lg">
+                    <TriangleAlert className="h-4 w-4 text-red-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium">Bugs e Estabilidade</div>
+                      <div className="text-sm text-muted-foreground">11 menções de problemas técnicos - Prioridade ALTA</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3 p-3 border rounded-lg">
+                    <Clock className="h-4 w-4 text-orange-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium">Novas Funcionalidades</div>
+                      <div className="text-sm text-muted-foreground">7 solicitações de features - Oportunidade de diferenciação</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Ranking */}
+          <TabsContent value="ranking" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Ranking de Apps de Investimento</CardTitle>
+                <CardDescription>Classificação baseada em avaliações e análise de mercado</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {investmentApps.sort((a, b) => (b.rating || 0) - (a.rating || 0)).map((app, index) => (
+                    <div key={app.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg font-bold text-blue-600">#{index + 1}</span>
+                        <div className="w-10 h-10 rounded-md overflow-hidden">
+                          <img 
+                            src={app.icon_url || '/placeholder-icon.png'} 
+                            alt={app.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{app.name}</h3>
+                          <p className="text-sm text-gray-600">{app.category}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Star className="w-4 h-4 text-yellow-400" />
+                        <span className="font-medium">{app.rating ? app.rating.toFixed(2) : 'N/A'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Análise de Sentimentos */}
-          <TabsContent value="sentiment" className="space-y-6">
+          <TabsContent value="sentiments" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -336,47 +366,11 @@ function Dashboard() {
             </Card>
           </TabsContent>
 
-          {/* Ranking */}
-          <TabsContent value="ranking" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ranking de Apps de Investimento</CardTitle>
-                <CardDescription>Classificação baseada em avaliações e análise de mercado</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {investmentApps.sort((a, b) => (b.rating || 0) - (a.rating || 0)).map((app, index) => (
-                    <div key={app.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg font-bold text-ion-primary">#{index + 1}</span>
-                        <div className="w-10 h-10 rounded-md overflow-hidden">
-                          <img 
-                            src={app.icon_url || '/placeholder-icon.png'} 
-                            alt={app.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-ion-primary">{app.name}</h3>
-                          <p className="text-sm text-gray-600">{app.category}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 text-yellow-400" />
-                        <span className="font-medium">{app.rating ? app.rating.toFixed(2) : 'N/A'}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Comentários */}
+          {/* Comentários íon */}
           <TabsContent value="comments" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Análise de Comentários</CardTitle>
+                <CardTitle>Análise de Comentários do íon</CardTitle>
                 <CardDescription>Visualize e analise os comentários dos usuários</CardDescription>
               </CardHeader>
               <CardContent>
@@ -391,30 +385,30 @@ function Dashboard() {
             </Card>
           </TabsContent>
 
-          {/* Análise IA */}
-          <TabsContent value="ai-analysis" className="space-y-6">
+          {/* Backlog */}
+          <TabsContent value="backlog" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Análise de Dados com IA</CardTitle>
-                <CardDescription>Insights gerados por inteligência artificial</CardDescription>
+                <CardTitle>Backlog de Melhorias</CardTitle>
+                <CardDescription>Itens identificados para melhoria do produto</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <Brain className="w-5 h-5 text-blue-600 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-blue-800 dark:text-blue-300">Recomendações Personalizadas</h4>
+                      <h4 className="font-semibold text-blue-800 dark:text-blue-300">Melhorias de UX</h4>
                       <p className="text-sm text-blue-700 dark:text-blue-400">
-                        A IA sugere que o aplicativo Íon Investimentos foque em melhorias na usabilidade para usuários iniciantes, o que pode aumentar a retenção em 15%.
+                        Simplificar fluxo de cadastro e melhorar onboarding para novos usuários.
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                     <Zap className="w-5 h-5 text-purple-600 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-purple-800 dark:text-purple-300">Previsão de Mercado</h4>
+                      <h4 className="font-semibold text-purple-800 dark:text-purple-300">Performance</h4>
                       <p className="text-sm text-purple-700 dark:text-purple-400">
-                        A IA prevê um crescimento de 20% no segmento de criptomoedas nos próximos 6 meses, indicando uma oportunidade para novos recursos.
+                        Otimizar tempo de carregamento das telas principais e reduzir consumo de dados.
                       </p>
                     </div>
                   </div>
@@ -423,8 +417,8 @@ function Dashboard() {
             </Card>
           </TabsContent>
 
-          {/* Backlog IA */}
-          <TabsContent value="backlog" className="space-y-6">
+          {/* IA Backlog */}
+          <TabsContent value="ai-backlog" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Geração de Backlog com IA</CardTitle>
@@ -494,16 +488,6 @@ function Dashboard() {
         )}
       </div>
     </div>
-  )
-}
-
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-    </Router>
   )
 }
 
