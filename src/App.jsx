@@ -45,6 +45,11 @@ function Dashboard() {
     !app.name.toLowerCase().includes('íon') && !app.name.toLowerCase().includes('ion')
   ).slice(0, 5)
 
+  const chartData = investmentApps.map(app => ({
+    name: app.name,
+    rating: app.rating || 0
+  }))
+
   const handleAnalysisComplete = (analysis) => {
     setSentimentData(analysis)
   }
